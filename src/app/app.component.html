@@ -1,0 +1,6 @@
+<div class="wrapper" [class.is-loading]="isLoading" [formGroup]="formGroup">
+  <input type="text" class="input" formControlName="query" (keyup.enter)="autoFill()"/>
+  <div class="list" *ngIf="items.length > 0">
+    <div class="list-items" *ngFor="let item of items" (click)="autoFill(item)">{{item}}</div>
+  </div>
+</div>
