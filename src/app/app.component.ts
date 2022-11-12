@@ -1,6 +1,6 @@
-import { Component, NgModuleFactory, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
-import { BehaviorSubject, debounceTime, Observable, Subject, takeUntil } from 'rxjs';
+import { debounceTime, Observable, Subject, takeUntil } from 'rxjs';
 import { AutoCompleteService } from 'src/services/autocomplete/auto-complete.service';
 
 @Component({

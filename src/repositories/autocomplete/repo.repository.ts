@@ -8,7 +8,7 @@ import { lastValueFrom } from 'rxjs';
 })
 export class RepoRepository {
 
-  url = '/api/items?q='
+  proxyUrl = '/api/items?q='
   wookieURL = 'https://swapi.dev/api/people/?search=';
 
   constructor(
@@ -16,7 +16,7 @@ export class RepoRepository {
   ) { }
 
   async getItems(query: string): Promise<any> {
-    return await lastValueFrom(this.http.get(`${this.url}${query}`));
+    return await lastValueFrom(this.http.get(`${this.proxyUrl}${query}`));
   }
 
   async getPeople(query: string): Promise<any> {
