@@ -12,7 +12,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   title = 'Autocomplete';
   items: string[] = [];
-  prevItems: string[] = [];
+  selectedItem: string = "";
   isLoading = false;
   formGroup = new FormGroup({
     query: new FormControl('')
@@ -38,27 +38,26 @@ export class AppComponent implements OnInit, OnDestroy {
 
   async listenForResults() {
     this.getQueryValues().subscribe(async query => {
-      this.setItems(query);
+      this.handleResults(query);
     })
   }
 
-  resetLocalItems() {
-    this.prevItems = {...this.items};
-    this.items = [];
-  }
-
   isValidQuery(q: string): boolean {
-    return q.length !== 0  && this.prevItems[0] !== q;
+    return q.length !== 0 && this.selectedItem !== q;
   }
 
-  async setItems(query: string | null) {
-    this.resetLocalItems();
-    const q = query as string;
-    if(this.isValidQuery(q) === false) return;
+  async setItems(q: string) {
     this.isLoading = true;
     const items = await this.getRemoteItems(q);
     this.items = items.results?.map((item:any) => item.name);
     this.isLoading = false;
+  }
+
+  async handleResults(query: string | null) {
+    this.items = [];
+    const q = query as string;
+    if(this.isValidQuery(q) === false) return;
+    this.setItems(q);
   }
   
   // Codility wanted a fn like this on click, but it's dumb for an "autocomplete", so I didn't implement it.
@@ -68,6 +67,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   autoFill(item?: string) {
     const fill = item ?? this.items[0];
+    this.selectedItem = fill;
     this.formGroup.controls['query'].setValue(fill);
   }
   
