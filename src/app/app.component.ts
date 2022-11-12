@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, NgModuleFactory, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { BehaviorSubject, debounceTime, Observable, Subject, takeUntil } from 'rxjs';
 import { AutoCompleteService } from 'src/services/autocomplete/auto-complete.service';
@@ -13,7 +13,7 @@ export class AppComponent implements OnInit, OnDestroy {
   title = 'Autocomplete';
   items: string[] = [];
   prevItems: string[] = [];
-  isLoading = new BehaviorSubject<boolean>(false);
+  isLoading = false;
   formGroup = new FormGroup({
     query: new FormControl('')
   });
@@ -55,8 +55,10 @@ export class AppComponent implements OnInit, OnDestroy {
     this.resetLocalItems();
     const q = query as string;
     if(this.isValidQuery(q) === false) return;
+    this.isLoading = true;
     const items = await this.getRemoteItems(q);
     this.items = items.results?.map((item:any) => item.name);
+    this.isLoading = false;
   }
   
   // Codility wanted a fn like this on click, but it's dumb for an "autocomplete", so I didn't implement it.

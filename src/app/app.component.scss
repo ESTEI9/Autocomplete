@@ -5,4 +5,11 @@
         padding: 0.5em;
         margin-bottom: 2px;
     }
+
+    &.is-loading {
+        &::after {
+            content: " loading...";
+            font-style: italic;
+        }
+    }
 }
