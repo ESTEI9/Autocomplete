@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
-import { BehaviorSubject, debounceTime, Subject, take, takeUntil } from 'rxjs';
+import { BehaviorSubject, debounceTime, Observable, Subject, takeUntil } from 'rxjs';
 import { AutoCompleteService } from 'src/services/autocomplete/auto-complete.service';
 
 @Component({
@@ -8,7 +8,7 @@ import { AutoCompleteService } from 'src/services/autocomplete/auto-complete.ser
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
+export class AppComponent implements OnInit, OnDestroy {
 
   title = 'Autocomplete';
   items: string[] = [];
@@ -22,22 +22,27 @@ export class AppComponent {
 
   constructor(
     private acService: AutoCompleteService
-  ) {
-    this.getItems();
+  ) {}
+
+  ngOnInit(): void {
+    this.listenForResults();
   }
 
-  async getResults(query: string) {
+  async getRemoteItems(query: string) {
       return await this.acService.getItems(query);
   }
 
-  async getItems() {
-    this.formGroup.controls['query'].valueChanges.pipe(debounceTime(500), takeUntil(this._onDestroy)).subscribe(async query => {
-      this.resetItems();
+  getQueryValues():Observable<string | null> {
+    return this.formGroup.controls['query'].valueChanges.pipe(debounceTime(500), takeUntil(this._onDestroy));
+  }
+
+  async listenForResults() {
+    this.getQueryValues().subscribe(async query => {
       this.setItems(query);
     })
   }
 
-  resetItems() {
+  resetLocalItems() {
     this.prevItems = {...this.items};
     this.items = [];
   }
@@ -47,9 +52,10 @@ export class AppComponent {
   }
 
   async setItems(query: string | null) {
+    this.resetLocalItems();
     const q = query as string;
     if(this.isValidQuery(q) === false) return;
-    const items = await this.getResults(q);
+    const items = await this.getRemoteItems(q);
     this.items = items.results?.map((item:any) => item.name);
   }
   
