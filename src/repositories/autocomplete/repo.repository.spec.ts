@@ -1,12 +1,15 @@
 import { TestBed } from '@angular/core/testing';
 
 import { RepoRepository } from './repo.repository';
+import { HttpClientModule } from '@angular/common/http';
 
 describe('RepoRepository', () => {
   let service: RepoRepository;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      imports: [HttpClientModule]
+    });
     service = TestBed.inject(RepoRepository);
   });
 
